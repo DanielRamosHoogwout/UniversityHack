@@ -170,3 +170,19 @@ tur_covid %>% ggplot(aes(x=fecha, y=Total)) +
   geom_line(col= 'red')+
   geom_point() +
   geom_line(aes(y = casos))
+
+######################################
+#Cluster
+####################################
+
+verduras <- df2 %>% filter(POSICION=="Mercas")
+verduras$FIN <- parse_date(verduras$FIN, "%d/%m/%Y")
+verduras <- verduras %>%
+  mutate(MONTH = month(FIN), YEAR = year(FIN))
+
+verduras <- verduras %>%
+  group_by(MONTH,YEAR,PRODUCTO) %>%
+  summarise(precio = mean(PRECIO))
+
+#Precio verduras vs Mercamadrid
+verduras_mad <- left_join(volume_mad, verduras)
