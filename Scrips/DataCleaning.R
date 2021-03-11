@@ -7,6 +7,8 @@ rm(list=ls())
 ### Paths ####
 pd1 = "Data/Dataset1.- DatosConsumoAlimentarioMAPAporCCAA.txt" #Consumo
 pd2 = "Data/Dataset2.- Precios Semanales Observatorio de Precios Junta de Andalucia.txt" #Precio
+
+pd4 = "Data/Dataset4.- Comercio Exterior de EspaÃ±a.txt"
 pd5 = "Data/Dataset5_Coronavirus_cases.txt" #Covid
 
 ### Libraries ####
