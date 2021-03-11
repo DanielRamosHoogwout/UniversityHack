@@ -8,7 +8,7 @@ rm(list=ls())
 pd1 = "Data/Dataset1.- DatosConsumoAlimentarioMAPAporCCAA.txt" #Consumo
 pd2 = "Data/Dataset2.- Precios Semanales Observatorio de Precios Junta de Andalucia.txt" #Precio
 
-pd4 = "Data/Dataset4.- Comercio Exterior de EspaÃ±a.txt"
+pd4 = "Data/Dataset4.- Comercio Exterior de España.txt"
 pd5 = "Data/Dataset5_Coronavirus_cases.txt" #Covid
 
 ### Libraries ####
@@ -54,7 +54,13 @@ unique(data2$UNIDAD) # 100% €/kg
 
 data2 %<>% mutate(Inicio = dmy(ï..INICIO), Fin = dmy(FIN)) %>%
   select(Inicio, Fin, Sector = SECTOR, Producto = PRODUCTO,
-         Posicion = POSICION, Prcio = PRECIO)
+         Posicion = POSICION, Precio = PRECIO)
+
+#### 4.Comercio Exterior ####
+data4 = read.csv(pd4, sep = "|")
+
+data4 %>% 
+
 
 #### 5.Covid ####
 data5 = read.csv(pd5, sep = "|", dec = ",")
