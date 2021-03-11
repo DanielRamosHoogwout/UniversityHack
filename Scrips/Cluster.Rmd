@@ -1,0 +1,85 @@
+---
+title: "Cluster"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+##
+# Data Cleaning
+##
+
+rm(list=ls())
+
+### Paths ####
+pd1 = "../Data/Dataset1.- DatosConsumoAlimentarioMAPAporCCAA.txt" #Consumo
+pd2 = "Data/Dataset2.- Precios Semanales Observatorio de Precios Junta de Andalucia.txt" #Precio
+
+pd4 = "Data/Dataset4.- Comercio Exterior de EspaÃ±a.txt"
+pd5 = "Data/Dataset5_Coronavirus_cases.txt" #Covid
+
+### Libraries ####
+library(tidyverse)
+library(magrittr)
+library(lubridate)
+
+### Datasets ####
+
+#### 1.Consumo ####
+data1 = read.csv(pd1, sep = "|", dec = ",")
+summary(data1) # 120 NA's en penetración
+
+data1 %<>% select(c(Ano = ï..AÃ.o, Mes, CCAA, Producto,
+                   Volumen = Volumen..miles.de.kg., Valor = Valor..miles.de.â... , 
+                   Precio_Medio = Precio.medio.kg, Penetracion = `PenetraciÃ³n....`,
+                   Cons_cpt = Consumo.per.capita, Gasto_cpt = Gasto.per.capita))
+##?
+# Juntar Año Mes para que? 
+##
+
+## Unidades
+# Volumen: en miles de kg, litros o unidades en caso de huevos
+# Valor: en miles de €
+# Penetración: % de hogares que lo compran
+
+str(data1)
+```
+
+
+```{r}
+data1819 <- data1 %>%
+  filter(CCAA == "Total Nacional") %>%
+  filter(Ano %in% c(2018, 2019)) %>%
+  group_by(Producto, Mes) %>%
+  summarise(meanPrecio = mean(Precio_Medio),
+            meanVolumen = mean(Volumen),
+            meanCons = mean(Cons_cpt),
+            meanGasto = mean(Gasto_cpt))
+
+data20 <- data1 %>%
+  filter(CCAA == "Total Nacional") %>%
+  filter(Ano  == 2020)
+
+datafin <- left_join(data20, data1819) %>%
+  mutate(difPrecio = (Precio_Medio - meanPrecio) / meanPrecio,
+         difVolumen = (Volumen - meanVolumen) / meanVolumen,
+         difCons = (Cons_cpt - meanCons) / meanCons,
+         difGasto = (Gasto_cpt - meanGasto) / meanGasto) %>%
+  select(Producto, Mes, starts_with("dif")) %>%
+  group_by(Producto) %>%
+  summarise(difPrecio = mean(difPrecio),
+            difVolumen = mean(difVolumen),
+            difCons = mean(difCons),
+            difGasto = mean(difGasto))
+
+as.matrix(datafin)
+rownames(datafin) = datafin$Producto
+a <- na.omit(as.data.frame(as.matrix(datafin)[,-1]))
+a %<>% mutate(across(c(difPrecio,difVolumen,difCons,difGasto), as.numeric))
+rownames(a) = datafin$Producto
+prcomp()
+```
+
