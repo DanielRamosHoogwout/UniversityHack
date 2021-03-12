@@ -57,9 +57,15 @@ data2 %<>% mutate(Inicio = dmy(ï..INICIO), Fin = dmy(FIN)) %>%
          Posicion = POSICION, Precio = PRECIO)
 
 #### 4.Comercio Exterior ####
-data4 = read.csv(pd4, sep = "|")
+data4 %<>% mutate(Inicio = my(ï..PERIOD)) %>%
+  select(Inicio, Reporter = REPORTER, Producto = PRODUCT,
+         Accion = FLOW, Unidad = INDICATORS, Valor = Value) %>%
+  filter(Valor != ":") %>%
+  mutate(Valor = as.numeric(Valor)) %>% 
+  drop_na(Valor)
 
-data4 %>% 
+summary(data4)
+table(data4$Producto)
 
 
 #### 5.Covid ####
@@ -78,4 +84,5 @@ data5 %<>% mutate(Date = dmy(dateRep)) %>%
 # Los que no tienen población registrada eliminados sin miedo
 ###
 str(data5)
+
 
