@@ -43,21 +43,37 @@ data4 %<>% mutate(Inicio = my(ï..PERIOD)) %>%
   mutate(Valor = as.numeric(Valor)) %>%  #se introducen NA's al hacer numeric
   drop_na(Valor)
 
-#### 5.Covid ####
-data5 = read.csv(pd5, sep = "|", dec = ",")
-
-data5 %<>% mutate(Date = dmy(dateRep)) %>% 
-  select(c(Territory = countriesAndTerritories, Code = countryterritoryCode,
-           Continent = continentExp, Date, Cases = cases, Death = deaths,
-           Cumulative = Cumulative_number_for_14_days_of_COVID.19_cases_per_100000,
-           Pop = popData2019)) %>%
-  drop_na(Pop)
-
+for (i in seq(nrow(data4))){
+  if (str_starts(data4$Pais[i], "Ger")){
+    data4$Pais[i] = "Germany"
+  }
+  else if (str_starts(data4$Pais[i], "Fr")){
+    data4$Pais[i] = "France"
+  }
+  else if (str_starts(data4$Pais[i], "It")){
+    data4$Pais[i] = "Italy"
+  }
+  else if (str_starts(data4$Pais[i], "Bel")){
+    data4$Pais[i] = "Belgium"
+  }
+}
 
 ### Comercio Exterior #####
+data4 %>% 
+  mutate(Ano = year(Inicio)) %>%
+  group_by(Pais, Ano, Accion, Unidad) %>% 
+  summarise(total = sum(Valor)) -> pais_ano
 
-pais_ano %>%
-  filter(stringr::str_starts(Pais, "Germany"), Unidad == "VALUE_IN_EUROS") %>%
-  ggplot(aes(x = Ano, y = total)) +
-  geom_bar(stat = "identity") +
-  facet_grid(.~Accion)
+getImportacionesPorPais = function(pais = "Germany") {
+  
+  plot1 = pais_ano %>%
+    filter(Pais == pais, Unidad == "VALUE_IN_EUROS") %>%
+    ggplot(aes(x = Ano, y = total)) +
+    geom_bar(stat = "identity") +
+    ggtitle(pais)+
+    facet_grid(.~Accion)
+  
+  return(plot1)
+}
+
+# getImportacionesPorPais("Austria")
