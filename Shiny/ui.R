@@ -31,7 +31,8 @@ Body =  dashboardBody(
                 h2("Ejemplo"),
                 fluidRow( # default width = 6 (half the dashboard)
                     box(title = "1.Plot", status = "primary",
-                        plotOutput("plot1", height = 250)),
+                        # plotOutput("plot1", height = 250)
+                        ),
                     
                     box(
                         title = "2.Controls", status = "warning",
