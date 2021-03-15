@@ -19,6 +19,7 @@ SideBar = dashboardSidebar(
         menuItem("Github", icon = icon("fire"),
                  href = "https://github.com/DanielRamosHoogwout/UniversityHack"),
         menuItem("Test1", tabName = "test1")
+        
     )
 )
 
