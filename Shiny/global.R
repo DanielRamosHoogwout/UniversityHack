@@ -5,11 +5,11 @@
 rm(list=ls())
 
 ### Paths ####
-pd1 = "../Data/Dataset1.- DatosConsumoAlimentarioMAPAporCCAA.txt" #Consumo
-pd2 = "Data/Dataset2.- Precios Semanales Observatorio de Precios Junta de Andalucia.txt" #Precio
+pd1 = "Docs/Data/Dataset1.- DatosConsumoAlimentarioMAPAporCCAA.txt" #Consumo
+pd2 = "Docs/Data/Dataset2.- Precios Semanales Observatorio de Precios Junta de Andalucia.txt" #Precio
 
-pd4 = "Data/Dataset4.- Comercio Exterior de España.txt"
-pd5 = "Data/Dataset5_Coronavirus_cases.txt" #Covid
+pd4 = "Docs/Data/Dataset4.- Comercio Exterior de España.txt"
+pd5 = "Docs/Data/Dataset5_Coronavirus_cases.txt" #Covid
 
 ### Libraries ####
 library(tidyverse)

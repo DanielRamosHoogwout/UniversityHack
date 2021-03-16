@@ -64,7 +64,7 @@ Body =  dashboardBody(
         tabItem(tabName = "intro",
                 h2("Widgets tab content"),
                 fluidRow(box(width = 12, solidHeader = TRUE,
-                             div(style = "text-align:justify",includeMarkdown("Test1.md"))
+                             div(style = "text-align:justify",includeMarkdown("Docs/Test1.md"))
                     )
                 )
         ),
