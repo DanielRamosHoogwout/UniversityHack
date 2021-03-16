@@ -19,7 +19,8 @@ SideBar = dashboardSidebar(
         #          ),
         menuItem("Análisis", icon = icon("dashboard"), startExpanded = F,
                  menuSubItem("Productos", tabName = "productos"),
-                 menuSubItem("Comercio Exterior", tabName = "com_ex")
+                 menuSubItem("Comercio Exterior", tabName = "com_ex"),
+                 menuSubItem("Mapa CCAA", tabName = "tab_map")
         ),
         menuItem("Github", icon = icon("fire"),
                  href = "https://github.com/DanielRamosHoogwout/UniversityHack")
@@ -99,6 +100,19 @@ Body =  dashboardBody(
                 # Create a spot for the barplot
                 box(width = 8,
                     withSpinner(plotOutput("comex"))
+                )
+        ),
+        tabItem(tabName = "tab_map", h1("Mapa CCAA"),
+                # box(width = 4,      
+                    # Define the sidebar with one input
+                    # selectInput("pais", "Pais:", 
+                    #             choices = unique(data4$Pais)),
+                    # hr(),
+                    # helpText("Selecciona un país")
+                # ),
+                # Create a spot for the barplot
+                box(width = 8,
+                    withSpinner(plotlyOutput("map"))
                 )
         )
 ))

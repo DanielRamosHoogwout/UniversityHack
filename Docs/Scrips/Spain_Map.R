@@ -1,18 +1,17 @@
 #Mapa españa
 library(tidyverse)
-library(rgdal) # para importar archivos shapefiles
-library(broom) # Para transformar los archivos shapefiles
+
 library(highcharter)
 
 #Cargamos dataset 1
 pd1 = "../Data/Dataset1.- DatosConsumoAlimentarioMAPAporCCAA.txt" #Consumo
-data1 = read.csv(pd1, sep = "|", dec = ",")
-summary(data1) # 120 NA's en penetración
+datos_mapa = read.csv(pd1, sep = "|", dec = ",")
+summary(datos_mapa) # 120 NA's en penetración
 # MUCHOS VALORES 0
 
-data1 <- data1[,-c(6,8,9,10,11,12)] #Eliminamos columnas que no interesan
-data1 <- data1 %>% filter(CCAA != "Total Nacional", ï..AÃ.o == c(2019,2020), Mes == c("Marzo", "Abril", "Mayo"))
-data1 <- data1 %>%
+datos_mapa <- data1[,-c(6,8,9,10,11,12)] #Eliminamos columnas que no interesan
+datos_mapa <- datos_mapa %>% filter(CCAA != "Total Nacional", ï..AÃ.o == c(2019,2020), Mes == c("Marzo", "Abril", "Mayo"))
+datos_mapa <- datos_mapa %>%
   group_by(ï..AÃ.o, CCAA) %>%
   summarise(TrimPrice = mean(Precio.medio.kg), TrimVol = mean(Volumen..miles.de.kg.)) %>%
   pivot_wider(names_from = ï..AÃ.o, values_from = c(TrimPrice, TrimVol), values_fill = 0) %>%
@@ -47,7 +46,7 @@ data_ccaa_mapa$CCAA <- ifelse(data_ccaa_mapa$CCAA == "Principado de Asturias", "
 data_ccaa_mapa$CCAA <- ifelse(data_ccaa_mapa$CCAA == "Comunidad Foral de Navarra", "Navarra", data_ccaa_mapa$CCAA)
 
 data_ccaa_mapa <- data_ccaa_mapa %>% 
-  left_join(data1, by = "CCAA")
+  left_join(datos_mapa, by = "CCAA")
 
 ##########################
 #### FUNCIONA ###########

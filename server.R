@@ -7,6 +7,6 @@ shinyServer(function(input, output) {
     
     output$comex <- renderPlot(getImportacionesPorPais(input$pais))
     output$prod1 <- renderPlot(covindex(input$producto1, input$variable1, plt = T)$plot)
-
+    output$map <- renderPlotly(final_map)
 })
 
