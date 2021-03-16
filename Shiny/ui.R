@@ -10,15 +10,18 @@ library(shinycssloaders)
 SideBar = dashboardSidebar(
     sidebarMenu(
         menuItem("Dashboard", tabName = "dashboard", icon = icon("dashboard")),
-        menuItem("Widgets", tabName = "widgets", icon = icon("th")),
-        menuItem("Apartados", icon = icon("grain"), startExpanded = F,
-                 menuItem("Sub-Apartados", icon = icon("spider"),
-                          menuSubItem("Sub-Sub-Apartado", tabName = "subsubapartado")
-                          )
-                 ),
+        menuItem("Introducción", tabName = "intro", icon = icon("th")),
+        # menuItem("Apartados", icon = icon("grain"), startExpanded = F,
+        #          menuItem("Sub-Apartados", icon = icon("spider"),
+        #                   menuSubItem("Sub-Sub-Apartado", tabName = "subsubapartado")
+        #                   )
+        #          ),
+        menuItem("Análisis", icon = icon("dashboard"), startExpanded = F,
+                 menuSubItem("Productos", tabName = "productos"),
+                 menuSubItem("Comercio Exterior", tabName = "com_ex")
+        ),
         menuItem("Github", icon = icon("fire"),
-                 href = "https://github.com/DanielRamosHoogwout/UniversityHack"),
-        menuItem("Test1", tabName = "test1")
+                 href = "https://github.com/DanielRamosHoogwout/UniversityHack")
         
     )
 )
@@ -54,17 +57,38 @@ Body =  dashboardBody(
                         id = "tabset1", height = "250px",
                         tabPanel("Tab1", "First tab content"),
                         tabPanel("Tab2", "Tab content 2")
-                    ),
+                    )
                 )
         ),
-        # Second tab content
-        tabItem(tabName = "widgets",
-                h2("Widgets tab content")
+        # Second tab con texto
+        tabItem(tabName = "intro",
+                h2("Widgets tab content"),
+                fluidRow(box(width = 12, solidHeader = TRUE,
+                             div(style = "text-align:justify",includeMarkdown("test1.md"))
+                    )
+                )
         ),
-        tabItem(tabName = "subsubapartado",
-                h1("Pene")
+        # tabItem(tabName = "subsubapartado",
+        #         h1("Pene")
+        # ),
+        tabItem(tabName = "productos", h1("Efecto del covid sobre productos agroalimentários"),
+                fluidRow( 
+                    box(width = 4,
+                        title = "Selección", status = "primary",
+                        selectInput("producto1", "Selecciona una producto:",
+                                    choices = unique(data1$Producto)),
+                        selectInput("variable1", "Selecciona una métrica:",
+                                    choices = c("scVolumen", "scPrecio_Medio", 
+                                                "scCons_cpt", "scGasto_cpt"))
+                    ),
+                    box(width = 8,
+                        title = "Visualización",
+                        withSpinner(plotOutput("prod1"))
+                    )
+                    
+                )
         ),
-        tabItem(tabName = "test1", h1("Test1"),
+        tabItem(tabName = "com_ex", h1("Comercio Exterior"),
                 box(width = 4,      
                     # Define the sidebar with one input
                     selectInput("pais", "Pais:", 
@@ -74,9 +98,9 @@ Body =  dashboardBody(
                     ),
                 # Create a spot for the barplot
                 box(width = 8,
-                    withSpinner(plotOutput("plot1"))
+                    withSpinner(plotOutput("comex"))
                 )
-    )
+        )
 ))
 
 

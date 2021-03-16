@@ -50,12 +50,13 @@ data1 %<>%
 
 prod = "TOTAL PATATAS"
 var = "scVolumen"
-covindex <- function(df, prod, var, plt = FALSE) {
-  df %<>%
-    filter(Producto == prod) %>%
+
+covindex <- function(prod = "CEBOLLAS", var = "scPrecio_Medio" , plt = FALSE) {
+  
+  data1 = data1 %>% filter(Producto == prod) %>%
     select(Fecha, var)
-  preCovid <- filter(df, Fecha <= "2020-02-01")
-  postCovid <- filter(df, Fecha >= "2020-02-01")
+  preCovid <- filter(data1, Fecha <= "2020-02-01")
+  postCovid <- filter(data1, Fecha >= "2020-02-01")
   st <- ts(preCovid[,2], start = 2018, frequency = 12)
   arimaPred <- forecast(st, h = 10)
   postCovid[,3] <- as.vector(arimaPred$mean)[1:nrow(postCovid)]
@@ -72,30 +73,30 @@ covindex <- function(df, prod, var, plt = FALSE) {
   }
 }
 
-covindex(data1, "CEBOLLAS", "scPrecio_Medio", plt = TRUE)
+covindex("CEBOLLAS", "scPrecio_Medio", plt = TRUE)$plot
 
-tabla <- matrix(nrow = 50, ncol = 4, dimnames = list(unique(data1$Producto), colnames(data1)[10:13]))
-
-for(prods in unique(data1$Producto)) {
-  for(inds in colnames(data1)[10:13]) {
-    tabla[prods, inds] <- covindex(data1, prods, inds)$index
-  }
-}
-
-acpFit2 <- prcomp(tabla[,c(1,3,4)], center = TRUE, scale = TRUE)
-
-tabla2 <- data.frame(acpFit2$x[,1], tabla[,2])
-
-hcComplete <- hclust(dist(tabla2), method = "complete")
-
-hcCut <- as.factor(cutree(hcComplete, 2))
-tabla2 <- cbind(tabla2, hcCut)
-
-ggplot(tabla2) +
-  geom_point(aes(x = acpFit2.x...1., y = tabla...2., color = hcCut)) +
-  labs(color = "Grupo") +
-  ggtitle("Separación por clusters", subtitle = "k-means clustering con 3 grupos") +
-  geom_text_repel(aes(x = acpFit2.x...1., y = tabla...2., label = row.names(tabla2), color = hcCut), size = 2, max.overlaps = 30)
+# tabla <- matrix(nrow = 50, ncol = 4, dimnames = list(unique(data1$Producto), colnames(data1)[10:13]))
+# 
+# for(prods in unique(data1$Producto)) {
+#   for(inds in colnames(data1)[10:13]) {
+#     tabla[prods, inds] <- covindex(data1, prods, inds)$index
+#   }
+# }
+# 
+# acpFit2 <- prcomp(tabla[,c(1,3,4)], center = TRUE, scale = TRUE)
+# 
+# tabla2 <- data.frame(acpFit2$x[,1], tabla[,2])
+# 
+# hcComplete <- hclust(dist(tabla2), method = "complete")
+# 
+# hcCut <- as.factor(cutree(hcComplete, 2))
+# tabla2 <- cbind(tabla2, hcCut)
+# 
+# ggplot(tabla2) +
+#   geom_point(aes(x = acpFit2.x...1., y = tabla...2., color = hcCut)) +
+#   labs(color = "Grupo") +
+#   ggtitle("Separación por clusters", subtitle = "k-means clustering con 3 grupos") +
+#   geom_text_repel(aes(x = acpFit2.x...1., y = tabla...2., label = row.names(tabla2), color = hcCut), size = 2, max.overlaps = 30)
 
 #### 2.Precios ####
 data2 = read.csv(pd2, sep = "|", dec = ",")
