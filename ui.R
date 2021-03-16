@@ -10,8 +10,8 @@ library(ggrepel)
     # To manage diferent internal tabs and external content with links.
 SideBar = dashboardSidebar(
     sidebarMenu(
-        menuItem("Dashboard", tabName = "dashboard", icon = icon("dashboard")),
         menuItem("Introducción", tabName = "intro", icon = icon("th")),
+        menuItem("Datos", tabName = "dashboard", icon = icon("hdd")),
         # menuItem("Apartados", icon = icon("grain"), startExpanded = F,
         #          menuItem("Sub-Apartados", icon = icon("spider"),
         #                   menuSubItem("Sub-Sub-Apartado", tabName = "subsubapartado")
@@ -63,7 +63,7 @@ Body =  dashboardBody(
         ),
         # Second tab con texto
         tabItem(tabName = "intro",
-                h2("Widgets tab content"),
+                h2("Introducción"),
                 fluidRow(box(width = 12, solidHeader = TRUE,
                              div(style = "text-align:justify",includeMarkdown("Docs/Test1.md"))
                     )
@@ -75,7 +75,7 @@ Body =  dashboardBody(
         tabItem(tabName = "productos", h1("Efecto del covid sobre productos agroalimentários"),
                 fluidRow( 
                     box(width = 4,
-                        title = "Selección", status = "primary",
+                        status = "primary",
                         selectInput("producto1", "Selecciona una producto:",
                                     choices = unique(data1$Producto)),
                         selectInput("variable1", "Selecciona una métrica:",
@@ -83,7 +83,6 @@ Body =  dashboardBody(
                                                 "scCons_cpt", "scGasto_cpt"))
                     ),
                     box(width = 8,
-                        title = "Visualización",
                         withSpinner(plotOutput("prod1"))
                     )
                     
