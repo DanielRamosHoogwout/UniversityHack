@@ -11,7 +11,7 @@ library(ggrepel)
 SideBar = dashboardSidebar(
     sidebarMenu(
         menuItem("Introducción", tabName = "intro", icon = icon("th")),
-        menuItem("Datos", tabName = "dashboard", icon = icon("hdd")),
+        menuItem("Datos", tabName = "data", icon = icon("hdd")),
         # menuItem("Apartados", icon = icon("grain"), startExpanded = F,
         #          menuItem("Sub-Apartados", icon = icon("spider"),
         #                   menuSubItem("Sub-Sub-Apartado", tabName = "subsubapartado")
@@ -33,62 +33,49 @@ SideBar = dashboardSidebar(
 Body =  dashboardBody(
     tabItems(
         # First tab content (dos cajas)
-        tabItem(tabName = "dashboard",
-                h2("Ejemplo"),
-                fluidRow( # default width = 6 (half the dashboard)
-                    box(title = "1.Plot", status = "primary",
-                        # plotOutput("plot1", height = 250)
-                        ),
-                    
-                    box(
-                        title = "2.Controls", status = "warning",
-                        sliderInput("slider", "Number of observations:", 1, 100, 50)
-                    )
-                ),
-                fluidRow( #second fluid row
-                    box(width = 2,
-                        title = "3.Test Solid Header and Collapse", status = "primary",
-                        solidHeader = T, collapsible = T
-                    ),
-                    box( width = 2,
-                        title = "4.Test Background color", background = "black",
-                        "text1", br(), "text2"
-                    ),
-                    tabBox( width = 8, # Box con multiples ventanas
-                        title = "5.First tabBox",
-                        id = "tabset1", height = "250px",
-                        tabPanel("Tab1", "First tab content"),
-                        tabPanel("Tab2", "Tab content 2")
-                    )
+        tabItem(tabName = "data",
+                h2("Datos"),
+                fluidRow(box(width = 12, solidHeader = TRUE,
+                             div(style = "text-align:justify",includeMarkdown("Docs/data.md"))
+                )
                 )
         ),
         # Second tab con texto
         tabItem(tabName = "intro",
                 h2("Introducción"),
                 fluidRow(box(width = 12, solidHeader = TRUE,
-                             div(style = "text-align:justify",includeMarkdown("Docs/Test1.md"))
+                             div(style = "text-align:justify",includeMarkdown("Docs/intro.md"))
                     )
                 )
         ),
         # tabItem(tabName = "subsubapartado",
         #         h1("Pene")
         # ),
-        tabItem(tabName = "productos", h1("Efecto del covid sobre productos agroalimentários"),
+        tabItem(tabName = "productos", h1("Efecto del COVID-19 sobre productos agroalimentarios"),
                 fluidRow( 
                     box(width = 4,
                         status = "primary",
                         selectInput("producto1", "Selecciona una producto:",
                                     choices = unique(data1$Producto)),
                         selectInput("variable1", "Selecciona una métrica:",
-                                    choices = c("scVolumen", "scPrecio_Medio", 
-                                                "scCons_cpt", "scGasto_cpt"))
+                                    choices = c("Volumen", "Precio", 
+                                                "Consumo", "Gasto")),
+                        withSpinner(verbatimTextOutput("index"))
                     ),
                     box(width = 8,
                         withSpinner(plotOutput("prod1"))
                     )
                     
+                ),
+                fluidRow(box(width = 12, solidHeader = TRUE,
+                             div(style = "text-align:justify",includeMarkdown("Docs/productos.md"))
                 )
-        ),
+                ),
+                fluidRow(
+                    box(width = 6,
+                        withSpinner(plotOutput("clus"))
+                )
+        )),
         tabItem(tabName = "com_ex", h1("Comercio Exterior"),
                 box(width = 4,      
                     # Define the sidebar with one input
