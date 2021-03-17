@@ -36,7 +36,7 @@ Body =  dashboardBody(
         tabItem(tabName = "data",
                 h2("Datos"),
                 fluidRow(box(width = 12, solidHeader = TRUE,
-                             div(style = "text-align:justify",includeMarkdown("Docs/intro.md"))
+                             div(style = "text-align:justify",includeMarkdown("Docs/data.md"))
                 )
                 )
         ),
@@ -68,7 +68,7 @@ Body =  dashboardBody(
                     
                 ),
                 fluidRow(box(width = 12, solidHeader = TRUE,
-                             div(style = "text-align:justify",includeMarkdown("Docs/intro.md"))
+                             div(style = "text-align:justify",includeMarkdown("Docs/productos.md"))
                 )
                 ),
                 fluidRow(
