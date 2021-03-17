@@ -44,16 +44,16 @@ data1 %<>%
 
 data1 %<>%
   group_by(Producto) %>%
-  mutate(scVolumen = scale(Volumen),
-         scPrecio_Medio = scale(Precio_Medio),
-         scCons_cpt = scale(Cons_cpt),
-         scGasto_cpt = scale(Gasto_cpt)) %>%
+  mutate(Volumen = scale(Volumen),
+         Precio = scale(Precio_Medio),
+         Consumo = scale(Cons_cpt),
+         Gasto = scale(Gasto_cpt)) %>%
   ungroup()
 
-prod = "TOTAL PATATAS"
-var = "scVolumen"
+# prod = "TOTAL PATATAS"
+# var = "Volumen"
 
-covindex <- function(prod = "CEBOLLAS", var = "scPrecio_Medio" , plt = FALSE) {
+covindex <- function(prod = "CEBOLLAS", var = "Precio" , plt = FALSE) {
   
   data1 = data1 %>% filter(Producto == prod) %>%
     select(Fecha, var)
@@ -68,37 +68,40 @@ covindex <- function(prod = "CEBOLLAS", var = "scPrecio_Medio" , plt = FALSE) {
       geom_line(data = preCovid, mapping = aes_string(x = "Fecha", y = var)) +
       geom_line(aes_string(x = "Fecha", y = var), color = "tomato") +
       geom_line(aes_string(x = "Fecha", y = "...3"), linetype = "dashed") +
-      geom_ribbon(aes_string(ymin = var, ymax = "...3", x = "Fecha"), alpha = 0.2)
+      geom_ribbon(aes_string(ymin = var, ymax = "...3", x = "Fecha"), alpha = 0.2) +
+      ggtitle(prod)
     return(list(index = index, plot = plot))
   } else {
     return(list(index = index))
   }
 }
 
-covindex("CEBOLLAS", "scPrecio_Medio", plt = TRUE)$plot
+#covindex("CEBOLLAS", "Precio", plt = TRUE)$plot
 
-# tabla <- matrix(nrow = 50, ncol = 4, dimnames = list(unique(data1$Producto), colnames(data1)[10:13]))
-# 
-# for(prods in unique(data1$Producto)) {
-#   for(inds in colnames(data1)[10:13]) {
-#     tabla[prods, inds] <- covindex(data1, prods, inds)$index
-#   }
-# }
-# 
-# acpFit2 <- prcomp(tabla[,c(1,3,4)], center = TRUE, scale = TRUE)
-# 
-# tabla2 <- data.frame(acpFit2$x[,1], tabla[,2])
-# 
-# hcComplete <- hclust(dist(tabla2), method = "complete")
-# 
-# hcCut <- as.factor(cutree(hcComplete, 2))
-# tabla2 <- cbind(tabla2, hcCut)
-# 
-# ggplot(tabla2) +
-#   geom_point(aes(x = acpFit2.x...1., y = tabla...2., color = hcCut)) +
-#   labs(color = "Grupo") +
-#   ggtitle("Separación por clusters", subtitle = "k-means clustering con 3 grupos") +
-#   geom_text_repel(aes(x = acpFit2.x...1., y = tabla...2., label = row.names(tabla2), color = hcCut), size = 2, max.overlaps = 30)
+tabla <- matrix(nrow = 50, ncol = 4, dimnames = list(unique(data1$Producto), colnames(data1)[c(5,10,11,12)]))
+
+for(prods in unique(data1$Producto)) {
+  for(inds in colnames(data1)[c(5,10,11,12)]) {
+    tabla[prods, inds] <- covindex(prods, inds)$index
+  }
+}
+
+acpFit2 <- prcomp(tabla[,c(1,3,4)], center = TRUE, scale = TRUE)
+
+tabla2 <- data.frame(acpFit2$x[,1], tabla[,2])
+
+hcComplete <- hclust(dist(tabla2), method = "complete")
+
+hcCut <- as.factor(cutree(hcComplete, 2))
+tabla2 <- cbind(tabla2, hcCut)
+
+cluster <- ggplot(tabla2) +
+  geom_point(aes(x = -acpFit2.x...1., y = tabla...2., color = hcCut)) +
+  labs(color = "Grupo") +
+  ggtitle("Separación por clusters", subtitle = "Cluster jerárquico con 2 grupos") +
+  geom_text_repel(aes(x = -acpFit2.x...1., y = tabla...2., label = row.names(tabla2), color = hcCut), label.size = 0.5, max.overlaps = 30) +
+  ylab("Índice Precio") +
+  xlab("Índice Consumo")
 
 #### 2.Precios ####
 data2 = read.csv(pd2, sep = "|", dec = ",")
