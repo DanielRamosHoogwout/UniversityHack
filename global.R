@@ -5,13 +5,11 @@
 rm(list=ls())
 
 ### Paths ####
-pd1 = "Docs/Data/Dataset1.- DatosConsumoAlimentarioMAPAporCCAA.txt" #Consumo
-pd2 = "Docs/Data/Dataset2.- Precios Semanales Observatorio de Precios Junta de Andalucia.txt" #Precio
-
-pd4 = "Docs/Data/Dataset4.- Comercio Exterior de Esp.txt"
-pd5 = "Docs/Data/Dataset5_Coronavirus_cases.txt" #Covid
+pd1 = "Docs/Data/Dataset1.- DatosConsumoAlimentarioMAPAporCCAA.txt" # Consumo
+pd4 = "Docs/Data/Dataset4.- Comercio Exterior de Esp.txt" # Comercio Exterior
 
 ### Libraries ####
+
 library(tidyverse)
 library(magrittr)
 library(lubridate)
@@ -20,9 +18,11 @@ library(ggrepel)
 library(rgdal)
 library(broom)
 library(plotly)
+
 ### Datasets ####
 
 #### 1.Consumo ####
+
 data1 = read.csv(pd1, sep = "|", dec = ",")
 
 data1 %<>% select(c(Ano = ï..AÃ.o, Mes, CCAA, Producto,
@@ -50,8 +50,6 @@ data1 %<>%
          Gasto = scale(Gasto_cpt)) %>%
   ungroup()
 
-# prod = "TOTAL PATATAS"
-# var = "Volumen"
 
 covindex <- function(prod = "CEBOLLAS", var = "Precio" , plt = FALSE) {
   
@@ -76,7 +74,7 @@ covindex <- function(prod = "CEBOLLAS", var = "Precio" , plt = FALSE) {
   }
 }
 
-#covindex("CEBOLLAS", "Precio", plt = TRUE)$plot
+# covindex("CEBOLLAS", "Precio", plt = TRUE)$plot
 
 tabla <- matrix(nrow = 50, ncol = 4, dimnames = list(unique(data1$Producto), colnames(data1)[c(5,10,11,12)]))
 
@@ -103,14 +101,8 @@ cluster <- ggplot(tabla2) +
   ylab("Índice Precio") +
   xlab("Índice Consumo")
 
-#### 2.Precios ####
-data2 = read.csv(pd2, sep = "|", dec = ",")
-
-data2 %<>% mutate(Inicio = dmy(ï..INICIO), Fin = dmy(FIN)) %>%
-  select(Inicio, Fin, Sector = SECTOR, Producto = PRODUCTO,
-         Posicion = POSICION, Precio = PRECIO)
-
 #### 4.Comercio Exterior ####
+
 data4 = read.csv(pd4, sep = "|")
 
 data4 %<>% mutate(Inicio = my(ï..PERIOD)) %>%
@@ -136,26 +128,51 @@ for (i in seq(nrow(data4))){
 }
 
 ### Comercio Exterior #####
+
 data4 %>% 
+  filter(!str_starts(Pais, "European")) %>%
   mutate(Ano = year(Inicio)) %>%
   group_by(Pais, Ano, Accion, Unidad) %>% 
   summarise(total = sum(Valor)) -> pais_ano
 
-getImportacionesPorPais = function(pais = "Germany") {
+getImportacionesPorPais_euros = function(pais = "Germany") {
   
   plot1 = pais_ano %>%
     filter(Pais == pais, Unidad == "VALUE_IN_EUROS") %>%
     ggplot(aes(x = Ano, y = total)) +
-    geom_bar(stat = "identity") +
-    ggtitle(pais)+
+    geom_bar(stat = "identity", aes(fill = Accion), show.legend = F) +
+    ggtitle(pais) +
     facet_grid(.~Accion)
   
   return(plot1)
 }
 
+getImportacionesPorPais_kg = function(pais = "Germany") {
+  
+  plot2 = pais_ano %>%
+    filter(Pais == pais, Unidad == "QUANTITY_IN_100KG") %>%
+    ggplot(aes(x = Ano, y = total)) +
+    geom_bar(stat = "identity", aes(fill = Accion), show.legend = F) +
+    ggtitle(pais) +
+    facet_grid(.~Accion)
+  
+  return(plot2)
+}
+
+pais_ano %>%
+  filter(Pais == "Italy", Unidad == "VALUE_IN_EUROS") %>%
+  ggplot(aes(x = Ano, y = total)) +
+  geom_bar(stat = "identity", aes(fill = Accion),
+           show.legend = F) +
+  ggtitle("Italy") +
+  facet_grid(.~Accion)
+
+
+
 # getImportacionesPorPais("Austria")
 
-# Mapa CCAA
+### Mapa CCAA ####
+
 datos_mapa = read.csv(pd1, sep = "|", dec = ",")
 
 datos_mapa <- datos_mapa[,-c(6,8,9,10,11,12)] #Eliminamos columnas que no interesan
@@ -168,16 +185,16 @@ datos_mapa <- datos_mapa %>%
          VarVol = (TrimVol_2020-TrimVol_2019)/TrimVol_2019)
 
 #Comprobamos que el archivo existe
-file.exists("Docs/Data/Comunidades_Autonomas_ETRS89_30N.shp")
-shapefile_ccaa <- readOGR(dsn = "Docs/Data/Comunidades_Autonomas_ETRS89_30N.shp")
+file.exists("Docs/Mapa/Comunidades_Autonomas_ETRS89_30N.shp")
+shapefile_ccaa <- readOGR(dsn = "Docs/Mapa/Comunidades_Autonomas_ETRS89_30N.shp")
 
 data_ccaa <- tidy(shapefile_ccaa)
 
-nombres_ccaa <- tibble(shapefile_ccaa$Texto) %>% 
+nombres_ccaa <- tibble(shapefile_ccaa$Texto) %>%
   mutate(id = as.character(seq(0, nrow(.)-1)))
 
-data_ccaa_mapa <- data_ccaa %>% 
-  left_join(nombres_ccaa, by = "id") %>% 
+data_ccaa_mapa <- data_ccaa %>%
+  left_join(nombres_ccaa, by = "id") %>%
   rename(CCAA = `shapefile_ccaa$Texto`)
 
 unique(data_ccaa_mapa$CCAA)
@@ -194,12 +211,13 @@ data_ccaa_mapa$CCAA <- ifelse(data_ccaa_mapa$CCAA == "RegiÃ³n de Murcia", "Mur
 data_ccaa_mapa$CCAA <- ifelse(data_ccaa_mapa$CCAA == "Principado de Asturias", "Asturias", data_ccaa_mapa$CCAA)
 data_ccaa_mapa$CCAA <- ifelse(data_ccaa_mapa$CCAA == "Comunidad Foral de Navarra", "Navarra", data_ccaa_mapa$CCAA)
 
-data_ccaa_mapa <- data_ccaa_mapa %>% 
+data_ccaa_mapa <- data_ccaa_mapa %>%
   left_join(datos_mapa, by = "CCAA")
 
 ##########################
-#### FUNCIONA ###########
+#### Map ###########
 #########################
+
 final_map <- data_ccaa_mapa %>%
   ggplot(aes(x = long, y = lat, group = group, fill = VarPrice, text=paste('CCAA:', CCAA))) +
   geom_polygon(color = "black") +

@@ -5,8 +5,8 @@ account: romancjosep
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 3799960
-bundleId: 4354134
+bundleId: 4357517
 url: https://romancjosep.shinyapps.io/Shiny_V01/
-when: 1615916254.5003
+when: 1615970646.06782
 asMultiple: FALSE
 asStatic: FALSE

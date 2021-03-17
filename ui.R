@@ -3,6 +3,12 @@ library(shiny)
 library(shinydashboard)
 library(shinycssloaders)
 library(ggrepel) 
+library(rgdal)
+library(plotly)
+library(tidyverse)
+library(forecast)
+
+
 
 # Each sidebar Item have to match with the corresponding tab Item with the tabName
 
@@ -12,11 +18,6 @@ SideBar = dashboardSidebar(
     sidebarMenu(
         menuItem("Introducción", tabName = "intro", icon = icon("th")),
         menuItem("Datos", tabName = "data", icon = icon("hdd")),
-        # menuItem("Apartados", icon = icon("grain"), startExpanded = F,
-        #          menuItem("Sub-Apartados", icon = icon("spider"),
-        #                   menuSubItem("Sub-Sub-Apartado", tabName = "subsubapartado")
-        #                   )
-        #          ),
         menuItem("Análisis", icon = icon("dashboard"), startExpanded = F,
                  menuSubItem("Productos", tabName = "productos"),
                  menuSubItem("Comercio Exterior", tabName = "com_ex"),
@@ -36,7 +37,7 @@ Body =  dashboardBody(
         tabItem(tabName = "data",
                 h2("Datos"),
                 fluidRow(box(width = 12, solidHeader = TRUE,
-                             div(style = "text-align:justify",includeMarkdown("Docs/data.md"))
+                             div(style = "text-align:justify",includeMarkdown("Docs/MD/data.md"))
                 )
                 )
         ),
@@ -44,73 +45,70 @@ Body =  dashboardBody(
         tabItem(tabName = "intro",
                 h2("Introducción"),
                 fluidRow(box(width = 12, solidHeader = TRUE,
-                             div(style = "text-align:justify",includeMarkdown("Docs/intro.md"))
+                             div(style = "text-align:justify",includeMarkdown("Docs/MD/intro.md"))
                     )
                 )
         ),
-        # tabItem(tabName = "subsubapartado",
-        #         h1("Pene")
-        # ),
         tabItem(tabName = "productos", h1("Efecto del COVID-19 sobre productos agroalimentarios"),
                 fluidRow( 
                     box(width = 4,
-                        status = "primary",
+                        solidHeader = T, status = "primary",
                         selectInput("producto1", "Selecciona una producto:",
                                     choices = unique(data1$Producto)),
                         selectInput("variable1", "Selecciona una métrica:",
                                     choices = c("Volumen", "Precio", 
                                                 "Consumo", "Gasto")),
                         withSpinner(verbatimTextOutput("index"))
-                    ),
+                       ),
                     box(width = 8,
                         withSpinner(plotOutput("prod1"))
-                    )
+                        )
                     
-                ),
-                fluidRow(box(width = 12, solidHeader = TRUE,
-                             div(style = "text-align:justify",includeMarkdown("Docs/productos.md"))
+                    ),
+                fluidRow(box(width = 12, 
+                             solidHeader = T, status = "warning",
+                             div(style = "text-align:justify",includeMarkdown("Docs/MD/productos.md"))
                 )
                 ),
                 fluidRow(
-                    box(width = 6,
+                    box(width = 8,
                         withSpinner(plotOutput("clus"))
                 )
         )),
         tabItem(tabName = "com_ex", h1("Comercio Exterior"),
-                box(width = 4,      
-                    # Define the sidebar with one input
-                    selectInput("pais", "Pais:", 
-                                    choices = unique(data4$Pais)),
-                        hr(),
-                        helpText("Selecciona un país")
-                    ),
-                # Create a spot for the barplot
-                box(width = 8,
-                    withSpinner(plotOutput("comex"))
+                fluidRow(
+                    box(width = 12, solidHeader = T, status = "warning", collapsible = T, 
+                        div(style = "text-align:justify",includeMarkdown("Docs/MD/Com_Ex_1.md"))
+                    )
+                ),
+                fluidRow(
+                    box(width = 4,
+                        solidHeader = T, status = "primary",
+                        selectInput("pais", "Pais:", 
+                                        choices = unique(data4$Pais)),
+                            hr(),
+                            helpText("Selecciona un país")
+                        ),
+                    tabBox(title = "Total Anual", width = 8,
+                           tabPanel("Valor en €", withSpinner(plotOutput("comex_eur"))),
+                           tabPanel("Cantidad en 100kg",withSpinner(plotOutput("comex_kg")))
+                    )
+                ),
+                fluidRow(
+                    box(width = 12, solidHeader = T, status = "warning",
+                        div(style = "text-align:justify",includeMarkdown("Docs/MD/Com_Ex_2.md"))
+                        )
                 )
         ),
         tabItem(tabName = "tab_map", h1("Mapa CCAA"),
-                # box(width = 4,      
-                    # Define the sidebar with one input
-                    # selectInput("pais", "Pais:", 
-                    #             choices = unique(data4$Pais)),
-                    # hr(),
-                    # helpText("Selecciona un país")
-                # ),
-                # Create a spot for the barplot
                 box(width = 8,
                     withSpinner(plotlyOutput("map"))
                 )
         )
 ))
 
-
 dashboardPage(
     dashboardHeader(title = "Agro Análisis"),
     SideBar,
     Body
 )
-
-
-
-
