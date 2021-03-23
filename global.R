@@ -79,16 +79,16 @@ covindex <- function(prod = "CEBOLLAS", var = "Precio" , plt = FALSE) {
 
 # covindex("CEBOLLAS", "Precio", plt = TRUE)$plot
 
-tabla <- matrix(nrow = 50, ncol = 4, dimnames = list(unique(data1$Producto), colnames(data1)[c(5,10,11,12)]))
+tabla <- matrix(nrow = 50, ncol = 4, dimnames = list(unique(data1$Producto), colnames(data1)[c(5,6,10,11)]))
 
 ###################### ERROR!
-# 
-# for(prods in unique(data1$Producto)) {
-#   for(inds in colnames(data1)[c(5, 6, 7, 8)]) {
-#     tabla[prods, inds] <- covindex(prods, inds)$index
-#   }
-# }
-# 
+
+for(prods in unique(data1$Producto)) {
+  for(inds in colnames(data1)[c(5, 6, 10, 11)]) {
+    tabla[prods, inds] <- covindex(prods, inds)$index
+  }
+}
+
 
 acpFit2 <- prcomp(tabla[,c(1,3,4)], center = TRUE, scale = TRUE)
 

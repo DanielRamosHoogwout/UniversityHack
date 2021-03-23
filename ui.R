@@ -50,22 +50,22 @@ Body =  dashboardBody(
                 )
         ),
         tabItem(tabName = "productos", h1("Efecto del COVID-19 sobre productos agroalimentarios"),
-                fluidRow( 
+                fluidRow(
                     box(width = 4,
                         solidHeader = T, status = "primary",
                         selectInput("producto1", "Selecciona una producto:",
                                     choices = unique(data1$Producto)),
                         selectInput("variable1", "Selecciona una métrica:",
-                                    choices = c("Volumen", "Precio", 
+                                    choices = c("Volumen", "Precio",
                                                 "Consumo", "Gasto")),
                         withSpinner(verbatimTextOutput("index"))
                        ),
                     box(width = 8,
                         withSpinner(plotOutput("prod1"))
                         )
-                    
+
                     ),
-                fluidRow(box(width = 12, 
+                fluidRow(box(width = 12,
                              solidHeader = T, status = "warning",
                              div(style = "text-align:justify",includeMarkdown("Docs/MD/productos.md"))
                 )
