@@ -23,12 +23,15 @@ library(plotly)
 
 #### 1.Consumo ####
 
-data1 = read.csv(pd1, sep = "|", dec = ",")
+# data1 = read_csv(pd1, sep = "|", dec = ",", encoding = "UTF-8")
+data1 = read_delim(pd1, delim = "|", locale = locale(decimal_mark = ","))
 
-data1 %<>% select(c(Ano = ï..AÃ.o, Mes, CCAA, Producto,
-                    Volumen = Volumen..miles.de.kg., Valor = Valor..miles.de.â... , 
-                    Precio_Medio = Precio.medio.kg, Penetracion = `PenetraciÃ³n....`,
-                    Cons_cpt = Consumo.per.capita, Gasto_cpt = Gasto.per.capita))
+data1 %<>% select(c(Año, Mes, CCAA, Producto, Volumen = `Volumen (miles de kg)`,
+                    Valor = `Valor (miles de €)`, Precio = `Precio medio kg`,
+                    Penetracion = `Penetración (%)`, Cons_cpt = `Consumo per capita`,
+                    Gasto_cpt = `Gasto per capita`))
+
+
 
 data1 %<>%
   select(-Penetracion, -Valor)
@@ -37,7 +40,7 @@ data1 %<>%
   filter(CCAA == "Total Nacional")
 
 data1 %<>%
-  mutate(Fecha = parse_date(paste(Mes, Ano), locale = locale("es"), format = "%B %Y"))
+  mutate(Fecha = parse_date(paste(Mes, Año), locale = locale("es"), format = "%B %Y"))
 
 data1 %<>%
   filter(Producto != "CHIRIMOYA")
@@ -45,7 +48,7 @@ data1 %<>%
 data1 %<>%
   group_by(Producto) %>%
   mutate(Volumen = scale(Volumen),
-         Precio = scale(Precio_Medio),
+         Precio = scale(Precio),
          Consumo = scale(Cons_cpt),
          Gasto = scale(Gasto_cpt)) %>%
   ungroup()
@@ -78,11 +81,14 @@ covindex <- function(prod = "CEBOLLAS", var = "Precio" , plt = FALSE) {
 
 tabla <- matrix(nrow = 50, ncol = 4, dimnames = list(unique(data1$Producto), colnames(data1)[c(5,10,11,12)]))
 
-for(prods in unique(data1$Producto)) {
-  for(inds in colnames(data1)[c(5,10,11,12)]) {
-    tabla[prods, inds] <- covindex(prods, inds)$index
-  }
-}
+###################### ERROR!
+# 
+# for(prods in unique(data1$Producto)) {
+#   for(inds in colnames(data1)[c(5, 6, 7, 8)]) {
+#     tabla[prods, inds] <- covindex(prods, inds)$index
+#   }
+# }
+# 
 
 acpFit2 <- prcomp(tabla[,c(1,3,4)], center = TRUE, scale = TRUE)
 
@@ -103,10 +109,9 @@ cluster <- ggplot(tabla2) +
 
 #### 4.Comercio Exterior ####
 
-data4 = read.csv(pd4, sep = "|")
+data4 = read_delim(pd4, delim = "|", locale = locale(decimal_mark = ","))
 
-data4 %<>% mutate(Inicio = my(ï..PERIOD)) %>%
-  select(Inicio, Pais = REPORTER, Producto = PRODUCT,
+data4 %<>% select(Inicio = PERIOD, Pais = REPORTER, Producto = PRODUCT,
          Accion = FLOW, Unidad = INDICATORS, Valor = Value) %>%
   filter(Valor != ":") %>% 
   mutate(Valor = as.numeric(Valor)) %>%  #se introducen NA's al hacer numeric
@@ -173,14 +178,19 @@ pais_ano %>%
 
 ### Mapa CCAA ####
 
-datos_mapa = read.csv(pd1, sep = "|", dec = ",")
+datos_mapa = read_delim(pd1, delim = "|", locale = locale(decimal_mark = ","))
+
+data1 %<>% select(c(Año, Mes, CCAA, Producto, Volumen = `Volumen (miles de kg)`,
+                    Valor = `Valor (miles de €)`, Precio = `Precio medio kg`,
+                    Penetracion = `Penetración (%)`, Cons_cpt = `Consumo per capita`,
+                    Gasto_cpt = `Gasto per capita`))
 
 datos_mapa <- datos_mapa[,-c(6,8,9,10,11,12)] #Eliminamos columnas que no interesan
-datos_mapa <- datos_mapa %>% filter(CCAA != "Total Nacional", ï..AÃ.o == c(2019,2020), Mes == c("Marzo", "Abril", "Mayo"))
+datos_mapa <- datos_mapa %>% filter(CCAA != "Total Nacional", Año == c(2019,2020), Mes == c("Marzo", "Abril", "Mayo"))
 datos_mapa <- datos_mapa %>%
-  group_by(ï..AÃ.o, CCAA) %>%
-  summarise(TrimPrice = mean(Precio.medio.kg), TrimVol = mean(Volumen..miles.de.kg.)) %>%
-  pivot_wider(names_from = ï..AÃ.o, values_from = c(TrimPrice, TrimVol), values_fill = 0) %>%
+  group_by(Año, CCAA) %>%
+  summarise(TrimPrice = mean(`Precio medio kg`), TrimVol = mean(`Volumen (miles de kg)`)) %>%
+  pivot_wider(names_from = Año, values_from = c(TrimPrice, TrimVol), values_fill = 0) %>%
   mutate(VarPrice = (TrimPrice_2020-TrimPrice_2019)/TrimPrice_2019,
          VarVol = (TrimVol_2020-TrimVol_2019)/TrimVol_2019)
 

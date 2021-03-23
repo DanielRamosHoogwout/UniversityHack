@@ -19,16 +19,15 @@ library(lubridate)
 ### Datasets ####
 
 #### 1.Consumo ####
-data1 = read.csv(pd1, sep = "|", dec = ",")
+# data1 = read.csv(pd1, sep = "|", dec = ",")
 summary(data1) # 120 NA's en penetración
 
-data1 %<>% select(c(Ano = ï..AÃ.o, Mes, CCAA, Producto,
-                   Volumen = Volumen..miles.de.kg., Valor = Valor..miles.de.â... , 
-                   Precio_Medio = Precio.medio.kg, Penetracion = `PenetraciÃ³n....`,
-                   Cons_cpt = Consumo.per.capita, Gasto_cpt = Gasto.per.capita))
-##?
-# Juntar Año Mes para que? 
-##
+data1 = read_delim(pd1, delim = "|", locale = locale(decimal_mark = ","))
+
+data1 %<>% select(c(Año, Mes, CCAA, Producto, Volumen = `Volumen (miles de kg)`,
+                    Valor = `Valor (miles de €)`, Precio = `Precio medio kg`,
+                    Penetracion = `Penetración (%)`, Cons_cpt = `Consumo per capita`,
+                    Gasto_cpt = `Gasto per capita`))
 
 ## Unidades
 # Volumen: en miles de kg, litros o unidades en caso de huevos
@@ -57,12 +56,11 @@ data2 %<>% mutate(Inicio = dmy(ï..INICIO), Fin = dmy(FIN)) %>%
          Posicion = POSICION, Precio = PRECIO)
 
 #### 4.Comercio Exterior ####
-data4 = read.csv(pd4, sep = "|")
+data4 = read_delim(pd4, delim = "|", locale = locale(decimal_mark = ","))
 unique(data4$PARTNER) # Solo "ES"
 
-data4 %<>% mutate(Inicio = my(ï..PERIOD)) %>%
-  select(Inicio, Pais = REPORTER, Producto = PRODUCT,
-         Accion = FLOW, Unidad = INDICATORS, Valor = Value) %>%
+data4 %<>% select(Inicio = PERIOD, Pais = REPORTER, Producto = PRODUCT,
+                  Accion = FLOW, Unidad = INDICATORS, Valor = Value) %>%
   filter(Valor != ":") %>% 
   mutate(Valor = as.numeric(Valor)) %>%  #se introducen NA's al hacer numeric
   drop_na(Valor)
@@ -71,6 +69,23 @@ summary(data4)
 table(data4$Producto)
 as.numeric(data4$Valor)
 table(data4$Pais)
+
+for (i in seq(nrow(data4))){
+  if (str_starts(data4$Pais[i], "Ger")){
+    data4$Pais[i] = "Germany"
+  }
+  else if (str_starts(data4$Pais[i], "Fr")){
+    data4$Pais[i] = "France"
+  }
+  else if (str_starts(data4$Pais[i], "It")){
+    data4$Pais[i] = "Italy"
+  }
+  else if (str_starts(data4$Pais[i], "Bel")){
+    data4$Pais[i] = "Belgium"
+  }
+}
+
+
 
 #### 5.Covid ####
 data5 = read.csv(pd5, sep = "|", dec = ",")
