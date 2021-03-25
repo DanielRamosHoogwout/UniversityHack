@@ -33,19 +33,19 @@ data1 %<>% select(c(Año, Mes, CCAA, Producto, Volumen = `Volumen (miles de kg)`
 
 
 
-data1 %<>%
+data1.1 <- data1 %>%
   select(-Penetracion, -Valor)
 
-data1 %<>%
+data1.1 %<>%
   filter(CCAA == "Total Nacional")
 
-data1 %<>%
+data1.1 %<>%
   mutate(Fecha = parse_date(paste(Mes, Año), locale = locale("es"), format = "%B %Y"))
 
-data1 %<>%
+data1.1 %<>%
   filter(Producto != "CHIRIMOYA")
 
-data1 %<>%
+data1.1 %<>%
   group_by(Producto) %>%
   mutate(Volumen = scale(Volumen),
          Precio = scale(Precio),
@@ -56,10 +56,10 @@ data1 %<>%
 
 covindex <- function(prod = "CEBOLLAS", var = "Precio" , plt = FALSE) {
   
-  data1 = data1 %>% filter(Producto == prod) %>%
+  data1.1 = data1.1 %>% filter(Producto == prod) %>%
     select(Fecha, var)
-  preCovid <- filter(data1, Fecha <= "2020-02-01")
-  postCovid <- filter(data1, Fecha >= "2020-02-01")
+  preCovid <- filter(data1.1, Fecha <= "2020-02-01")
+  postCovid <- filter(data1.1, Fecha >= "2020-02-01")
   st <- ts(preCovid[,2], start = 2018, frequency = 12)
   arimaPred <- forecast(st, h = 10)
   postCovid[,3] <- as.vector(arimaPred$mean)[1:nrow(postCovid)]
@@ -79,12 +79,12 @@ covindex <- function(prod = "CEBOLLAS", var = "Precio" , plt = FALSE) {
 
 # covindex("CEBOLLAS", "Precio", plt = TRUE)$plot
 
-tabla <- matrix(nrow = 50, ncol = 4, dimnames = list(unique(data1$Producto), colnames(data1)[c(5,6,10,11)]))
+tabla <- matrix(nrow = 50, ncol = 4, dimnames = list(unique(data1.1$Producto), colnames(data1.1)[c(5,6,10,11)]))
 
 ###################### ERROR!
 
-for(prods in unique(data1$Producto)) {
-  for(inds in colnames(data1)[c(5, 6, 10, 11)]) {
+for(prods in unique(data1.1$Producto)) {
+  for(inds in colnames(data1.1)[c(5, 6, 10, 11)]) {
     tabla[prods, inds] <- covindex(prods, inds)$index
   }
 }
@@ -136,15 +136,15 @@ for (i in seq(nrow(data4))){
 
 data4 %>% 
   filter(!str_starts(Pais, "European")) %>%
-  mutate(Ano = year(Inicio)) %>%
-  group_by(Pais, Ano, Accion, Unidad) %>% 
+  mutate(Año = year(my(Inicio))) %>%
+  group_by(Pais, Año, Accion, Unidad) %>% 
   summarise(total = sum(Valor)) -> pais_ano
 
 getImportacionesPorPais_euros = function(pais = "Germany") {
   
   plot1 = pais_ano %>%
     filter(Pais == pais, Unidad == "VALUE_IN_EUROS") %>%
-    ggplot(aes(x = Ano, y = total)) +
+    ggplot(aes(x = Año, y = total)) +
     geom_bar(stat = "identity", aes(fill = Accion), show.legend = F) +
     ggtitle(pais) +
     facet_grid(.~Accion)
@@ -156,7 +156,7 @@ getImportacionesPorPais_kg = function(pais = "Germany") {
   
   plot2 = pais_ano %>%
     filter(Pais == pais, Unidad == "QUANTITY_IN_100KG") %>%
-    ggplot(aes(x = Ano, y = total)) +
+    ggplot(aes(x = Año, y = total)) +
     geom_bar(stat = "identity", aes(fill = Accion), show.legend = F) +
     ggtitle(pais) +
     facet_grid(.~Accion)
@@ -166,7 +166,7 @@ getImportacionesPorPais_kg = function(pais = "Germany") {
 
 pais_ano %>%
   filter(Pais == "Italy", Unidad == "VALUE_IN_EUROS") %>%
-  ggplot(aes(x = Ano, y = total)) +
+  ggplot(aes(x = Año, y = total)) +
   geom_bar(stat = "identity", aes(fill = Accion),
            show.legend = F) +
   ggtitle("Italy") +
@@ -174,22 +174,22 @@ pais_ano %>%
 
 
 
-# getImportacionesPorPais("Austria")
+getImportacionesPorPais_kg("Austria")
 
 ### Mapa CCAA ####
 
-datos_mapa = read_delim(pd1, delim = "|", locale = locale(decimal_mark = ","))
+# datos_mapa = read_delim(pd1, delim = "|", locale = locale(decimal_mark = ","))
+# 
+# datos_mapa %<>% select(c(Año, Mes, CCAA, Producto, Volumen = `Volumen (miles de kg)`,
+#                     Valor = `Valor (miles de €)`, Precio = `Precio medio kg`,
+#                     Penetracion = `Penetración (%)`, Cons_cpt = `Consumo per capita`,
+#                     Gasto_cpt = `Gasto per capita`))
 
-data1 %<>% select(c(Año, Mes, CCAA, Producto, Volumen = `Volumen (miles de kg)`,
-                    Valor = `Valor (miles de €)`, Precio = `Precio medio kg`,
-                    Penetracion = `Penetración (%)`, Cons_cpt = `Consumo per capita`,
-                    Gasto_cpt = `Gasto per capita`))
-
-datos_mapa <- datos_mapa[,-c(6,8,9,10,11,12)] #Eliminamos columnas que no interesan
+datos_mapa <- data1[,-c(6,8,9,10)] #Eliminamos columnas que no interesan
 datos_mapa <- datos_mapa %>% filter(CCAA != "Total Nacional", Año == c(2019,2020), Mes == c("Marzo", "Abril", "Mayo"))
 datos_mapa <- datos_mapa %>%
   group_by(Año, CCAA) %>%
-  summarise(TrimPrice = mean(`Precio medio kg`), TrimVol = mean(`Volumen (miles de kg)`)) %>%
+  summarise(TrimPrice = mean(Precio), TrimVol = mean(Volumen)) %>%
   pivot_wider(names_from = Año, values_from = c(TrimPrice, TrimVol), values_fill = 0) %>%
   mutate(VarPrice = (TrimPrice_2020-TrimPrice_2019)/TrimPrice_2019,
          VarVol = (TrimVol_2020-TrimVol_2019)/TrimVol_2019)
@@ -236,3 +236,4 @@ final_map <- data_ccaa_mapa %>%
   theme(panel.background = element_rect(size= 0.5, color = "white", fill = "white")) +
   labs(title = "CCAA", subtitle = "España")
 final_map <- ggplotly(final_map)
+
