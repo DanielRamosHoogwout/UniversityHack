@@ -69,12 +69,13 @@ Body =  dashboardBody(
                              solidHeader = T, status = "warning",
                              div(style = "text-align:justify",includeMarkdown("Docs/MD/productos.md"))
                 )
-                ),
-                fluidRow(
-                    box(width = 8,
-                        withSpinner(plotOutput("clus"))
-                )
-        )),
+                )#,
+        #         fluidRow(
+        #             box(width = 8,
+        #                 withSpinner(plotOutput("clus"))
+        #         )
+        # )
+        ),
         tabItem(tabName = "com_ex", h1("Comercio Exterior"),
                 fluidRow(
                     box(width = 12, solidHeader = T, status = "warning", collapsible = T, 

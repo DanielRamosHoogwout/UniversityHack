@@ -14,7 +14,7 @@ shinyServer(function(input, output) {
     output$comex_eur <- renderPlot(getImportacionesPorPais_euros(input$pais))
     output$comex_kg <- renderPlot(getImportacionesPorPais_kg(input$pais))
     output$map <- renderPlotly(final_map)
-    output$clus <- renderPlot(cluster)
+    #output$clus <- renderPlot(cluster)
     output$index <- renderPrint(paste("Valor del índice:", as.character(round(covindex(input$producto1, input$variable1, plt = T)$index, 3))))
 })
 

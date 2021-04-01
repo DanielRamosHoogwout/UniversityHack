@@ -83,29 +83,29 @@ tabla <- matrix(nrow = 50, ncol = 4, dimnames = list(unique(data1.1$Producto), c
 
 ###################### ERROR!
 
-for(prods in unique(data1.1$Producto)) {
-  for(inds in colnames(data1.1)[c(5, 6, 10, 11)]) {
-    tabla[prods, inds] <- covindex(prods, inds)$index
-  }
-}
-
-
-acpFit2 <- prcomp(tabla[,c(1,3,4)], center = TRUE, scale = TRUE)
-
-tabla2 <- data.frame(acpFit2$x[,1], tabla[,2])
-
-hcComplete <- hclust(dist(tabla2), method = "complete")
-
-hcCut <- as.factor(cutree(hcComplete, 2))
-tabla2 <- cbind(tabla2, hcCut)
-
-cluster <- ggplot(tabla2) +
-  geom_point(aes(x = -acpFit2.x...1., y = tabla...2., color = hcCut)) +
-  labs(color = "Grupo") +
-  ggtitle("Separación por clusters", subtitle = "Cluster jerárquico con 2 grupos") +
-  geom_text_repel(aes(x = -acpFit2.x...1., y = tabla...2., label = row.names(tabla2), color = hcCut), label.size = 0.5, max.overlaps = 30) +
-  ylab("Índice Precio") +
-  xlab("Índice Consumo")
+# for(prods in unique(data1.1$Producto)) {
+#   for(inds in colnames(data1.1)[c(5, 6, 10, 11)]) {
+#     tabla[prods, inds] <- covindex(prods, inds)$index
+#   }
+# }
+# 
+# 
+# acpFit2 <- prcomp(tabla[,c(1,3,4)], center = TRUE, scale = TRUE)
+# 
+# tabla2 <- data.frame(acpFit2$x[,1], tabla[,2])
+# 
+# hcComplete <- hclust(dist(tabla2), method = "complete")
+# 
+# hcCut <- as.factor(cutree(hcComplete, 2))
+# tabla2 <- cbind(tabla2, hcCut)
+# 
+# cluster <- ggplot(tabla2) +
+#   geom_point(aes(x = -acpFit2.x...1., y = tabla...2., color = hcCut)) +
+#   labs(color = "Grupo") +
+#   ggtitle("Separación por clusters", subtitle = "Cluster jerárquico con 2 grupos") +
+#   geom_text_repel(aes(x = -acpFit2.x...1., y = tabla...2., label = row.names(tabla2), color = hcCut), label.size = 0.5, max.overlaps = 30) +
+#   ylab("Índice Precio") +
+#   xlab("Índice Consumo")
 
 #### 4.Comercio Exterior ####
 
