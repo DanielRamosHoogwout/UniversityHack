@@ -35,7 +35,7 @@ Body =  dashboardBody(
     tabItems(
         # First tab content (dos cajas)
         tabItem(tabName = "data",
-                h2("Datos"),
+                h2("DATOS"),
                 fluidRow(box(width = 12, solidHeader = TRUE,
                              div(style = "text-align:justify",includeMarkdown("Docs/MD/data.md"))
                 )
@@ -43,7 +43,7 @@ Body =  dashboardBody(
         ),
         # Second tab con texto
         tabItem(tabName = "intro",
-                h2("Introducción"),
+                h2("INTRODUCCIÓN"),
                 fluidRow(box(width = 12, solidHeader = TRUE,
                              div(style = "text-align:justify",includeMarkdown("Docs/MD/intro.md"))
                     )

@@ -23,29 +23,18 @@ library(plotly)
 
 #### 1.Consumo ####
 
-# data1 = read_csv(pd1, sep = "|", dec = ",", encoding = "UTF-8")
-data1 = read_delim(pd1, delim = "|", locale = locale(decimal_mark = ","))
+data1 <- read_delim(pd1, delim = "|", locale = locale(decimal_mark = ","))
 
 data1 %<>% select(c(Año, Mes, CCAA, Producto, Volumen = `Volumen (miles de kg)`,
                     Valor = `Valor (miles de €)`, Precio = `Precio medio kg`,
                     Penetracion = `Penetración (%)`, Cons_cpt = `Consumo per capita`,
                     Gasto_cpt = `Gasto per capita`))
 
-
-
 data1.1 <- data1 %>%
-  select(-Penetracion, -Valor)
-
-data1.1 %<>%
-  filter(CCAA == "Total Nacional")
-
-data1.1 %<>%
-  mutate(Fecha = parse_date(paste(Mes, Año), locale = locale("es"), format = "%B %Y"))
-
-data1.1 %<>%
-  filter(Producto != "CHIRIMOYA")
-
-data1.1 %<>%
+  select(-Penetracion, -Valor) %>%
+  filter(CCAA == "Total Nacional") %>%
+  mutate(Fecha = parse_date(paste(Mes, Año), locale = locale("es"), format = "%B %Y")) %>%
+  filter(Producto != "CHIRIMOYA") %>%
   group_by(Producto) %>%
   mutate(Volumen = scale(Volumen),
          Precio = scale(Precio),
@@ -53,9 +42,7 @@ data1.1 %<>%
          Gasto = scale(Gasto_cpt)) %>%
   ungroup()
 
-
 covindex <- function(prod = "CEBOLLAS", var = "Precio" , plt = FALSE) {
-  
   data1.1 = data1.1 %>% filter(Producto == prod) %>%
     select(Fecha, var)
   preCovid <- filter(data1.1, Fecha <= "2020-02-01")
@@ -66,18 +53,26 @@ covindex <- function(prod = "CEBOLLAS", var = "Precio" , plt = FALSE) {
   index <- sum(postCovid[,2] - postCovid[,3]) / nrow(postCovid)
   if(plt) {
     plot <- ggplot(data = postCovid) +
-      geom_line(data = preCovid, mapping = aes_string(x = "Fecha", y = var)) +
-      geom_line(aes_string(x = "Fecha", y = var), color = "tomato") +
-      geom_line(aes_string(x = "Fecha", y = "...3"), linetype = "dashed") +
-      geom_ribbon(aes_string(ymin = var, ymax = "...3", x = "Fecha"), alpha = 0.2) +
-      ggtitle(prod)
+      geom_line(data = preCovid, mapping = aes_string(x = "Fecha", y = var), size = 1.2) +
+      geom_line(aes_string(x = "Fecha", y = var), color = "tomato", size = 1.2) +
+      geom_line(aes_string(x = "Fecha", y = "...3"), linetype = "dashed", size = 1.2) +
+      geom_ribbon(aes_string(ymin = var, ymax = "...3", x = "Fecha"), alpha = 0.2, fill = "tomato") +
+      geom_vline(xintercept = as.Date("2020-02-01"), alpha = 0.5, linetype = 3) +
+      geom_label(label = "PRE-COVID", y = -0.6, x = as.Date("2019-11-01")) +
+      geom_label(label = "COVID", y = -0.6, x = as.Date("2020-04-05")) +
+      geom_label(label = "Febrero 2020", y = -0.87, x = as.Date("2020-02-01")) +
+      ggtitle(prod) +
+      theme(panel.background = element_rect(fill = "white",colour = "grey50"),
+            axis.text.y = element_blank(),
+            axis.ticks.y = element_blank(),
+            axis.line = element_line(size = 1, linetype = "solid"))
     return(list(index = index, plot = plot))
   } else {
     return(list(index = index))
   }
 }
 
-# covindex("CEBOLLAS", "Precio", plt = TRUE)$plot
+#covindex("CEBOLLAS", "Precio", plt = TRUE)$plot
 
 tabla <- matrix(nrow = 50, ncol = 4, dimnames = list(unique(data1.1$Producto), colnames(data1.1)[c(5,6,10,11)]))
 
