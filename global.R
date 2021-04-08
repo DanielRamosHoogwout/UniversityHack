@@ -262,6 +262,7 @@ data_ccaa_mapa$CCAA <- ifelse(data_ccaa_mapa$CCAA == "Castilla - La Mancha", "Ca
 data_ccaa_mapa$CCAA <- ifelse(data_ccaa_mapa$CCAA == "RegiÃ³n de Murcia", "Murcia", data_ccaa_mapa$CCAA)
 data_ccaa_mapa$CCAA <- ifelse(data_ccaa_mapa$CCAA == "Principado de Asturias", "Asturias", data_ccaa_mapa$CCAA)
 data_ccaa_mapa$CCAA <- ifelse(data_ccaa_mapa$CCAA == "Comunidad Foral de Navarra", "Navarra", data_ccaa_mapa$CCAA)
+data_ccaa_mapa$CCAA <- ifelse(data_ccaa_mapa$CCAA == "CataluÃ±a", "Cataluña", data_ccaa_mapa$CCAA)
 
 data_ccaa_mapa <- data_ccaa_mapa %>%
   left_join(datos_mapa, by = "CCAA")
