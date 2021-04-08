@@ -56,8 +56,7 @@ Body =  dashboardBody(
                         selectInput("producto1", "Selecciona una producto:",
                                     choices = unique(data1$Producto)),
                         selectInput("variable1", "Selecciona una métrica:",
-                                    choices = c("Volumen", "Precio",
-                                                "Consumo", "Gasto")),
+                                    choices = c("Volumen", "Consumo", "Precio")),
                         withSpinner(verbatimTextOutput("index"))
                        ),
                     box(width = 8,

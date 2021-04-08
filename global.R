@@ -37,12 +37,11 @@ data1.1 <- data1 %>%
   filter(Producto != "CHIRIMOYA") %>%
   group_by(Producto) %>%
   mutate(Volumen = scale(Volumen),
-         Precio = scale(Precio),
          Consumo = scale(Cons_cpt),
-         Gasto = scale(Gasto_cpt)) %>%
+         Precio = scale(Precio)) %>%
   ungroup()
 
-covindex <- function(prod = "CEBOLLAS", var = "Precio" , plt = FALSE) {
+covindex <- function(prod = "CEBOLLAS", var = "Volumen" , plt = FALSE) {
   data1.1 = data1.1 %>% filter(Producto == prod) %>%
     select(Fecha, var)
   preCovid <- filter(data1.1, Fecha <= "2020-02-01")
@@ -54,53 +53,101 @@ covindex <- function(prod = "CEBOLLAS", var = "Precio" , plt = FALSE) {
   if(plt) {
     plot <- ggplot(data = postCovid) +
       geom_line(data = preCovid, mapping = aes_string(x = "Fecha", y = var), size = 1.2) +
-      geom_line(aes_string(x = "Fecha", y = var), color = "tomato", size = 1.2) +
-      geom_line(aes_string(x = "Fecha", y = "...3"), linetype = "dashed", size = 1.2) +
+      geom_line(aes_q(x = as.name("Fecha"), y = as.name(var), color = "tomato"), size = 1.2) +
+      geom_line(aes_q(x = as.name("Fecha"), y = as.name("...3"), linetype = "dashed"), size = 1.2) +
       geom_ribbon(aes_string(ymin = var, ymax = "...3", x = "Fecha"), alpha = 0.2, fill = "tomato") +
       geom_vline(xintercept = as.Date("2020-02-01"), alpha = 0.5, linetype = 3) +
-      geom_label(label = "PRE-COVID", y = -0.6, x = as.Date("2019-11-01")) +
-      geom_label(label = "COVID", y = -0.6, x = as.Date("2020-04-05")) +
-      geom_label(label = "Febrero 2020", y = -0.87, x = as.Date("2020-02-01")) +
       ggtitle(prod) +
-      theme(panel.background = element_rect(fill = "white",colour = "grey50"),
+      scale_color_manual(name = "Valor Real", values = c("tomato" = "tomato"), labels = c("")) +
+      scale_linetype_manual(name = "Predicción", values = c("dashed" = "dashed"), labels = c("")) +
+      theme(panel.background = element_rect(fill = NA),
             axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
-            axis.line = element_line(size = 1, linetype = "solid"))
+            axis.line = element_line(size = 1, linetype = "solid"),
+            legend.position = "right")
+    rangplot <- ggplot_build(plot)$layout$panel_scales_y[[1]]$range$range
+    plot <- plot +
+      geom_label(label = "PRE-COVID", y = rangplot[1] + 0.14 * (rangplot[2] - rangplot[1]), x = as.Date("2019-11-01")) +
+      geom_label(label = "COVID", y = rangplot[1] + 0.14 * (rangplot[2] - rangplot[1]), x = as.Date("2020-04-19")) +
+      geom_label(label = "Febrero 2020", y = rangplot[1] + 0.06 * (rangplot[2] - rangplot[1]), x = as.Date("2020-02-01"))
     return(list(index = index, plot = plot))
   } else {
     return(list(index = index))
   }
 }
 
-#covindex("CEBOLLAS", "Precio", plt = TRUE)$plot
+covindex("MELON", "Volumen", plt = TRUE)$plot
 
-tabla <- matrix(nrow = 50, ncol = 4, dimnames = list(unique(data1.1$Producto), colnames(data1.1)[c(5,6,10,11)]))
+tabla <- matrix(nrow = 50, ncol = 3, dimnames = list(unique(data1.1$Producto), colnames(data1.1)[c(5, 10, 6)]))
 
-###################### ERROR!
+##################### DEMASIADA COMPILACIÓN, NO EJECUTAR CON EL SHINY
 
 # for(prods in unique(data1.1$Producto)) {
-#   for(inds in colnames(data1.1)[c(5, 6, 10, 11)]) {
+#   for(inds in colnames(data1.1)[c(5, 10, 6)]) {
 #     tabla[prods, inds] <- covindex(prods, inds)$index
 #   }
 # }
 # 
+# prcomp(tabla, center = TRUE, scale = TRUE)
+# acpFit <- prcomp(tabla, center = TRUE, scale = TRUE)
+# summary(acpFit)$importance
 # 
-# acpFit2 <- prcomp(tabla[,c(1,3,4)], center = TRUE, scale = TRUE)
+# tablaacp <- as.data.frame(acpFit$x[,c(1,2)])
 # 
-# tabla2 <- data.frame(acpFit2$x[,1], tabla[,2])
+# tablasc <- scale(tabla)
 # 
-# hcComplete <- hclust(dist(tabla2), method = "complete")
+# tablasc
+# tablaacp
+# tabla
 # 
-# hcCut <- as.factor(cutree(hcComplete, 2))
-# tabla2 <- cbind(tabla2, hcCut)
+# scales <- attributes(tablasc)$`scaled:center` / attributes(tablasc)$`scaled:scale`
+# scales
+# acpFit$rotation[,1]
+# acpFit$rotation[,2]
+# rv <- t(acpFit$rotation[,1]) %*% scales # recta vertical
+# rh <- -t(acpFit$rotation[,2]) %*% scales # recta horizontal
 # 
-# cluster <- ggplot(tabla2) +
-#   geom_point(aes(x = -acpFit2.x...1., y = tabla...2., color = hcCut)) +
+# tablaacp[,1] <- -tablaacp[,1]
+# 
+# set.seed(1)
+# WCSS <- vector()
+# for(i in 1:10) {
+#   WCSS[i] <- sum(kmeans(tablaacp, i)$withinss)
+# }
+# dataWCSS <- tibble(K = 1:10, WCSS)
+# ggplot(dataWCSS, mapping = aes(x = K, y = WCSS)) +
+#   geom_line() +
+#   geom_point() +
+#   geom_point(x = 3, y = WCSS[3], size = 3) +
+#   scale_x_continuous(breaks = 1:10) +
+#   ggtitle("Método del codo", subtitle = "Elección del K óptimo")
+# 
+# kmCluster <- kmeans(tablaacp, 3)
+# kmCut <- as.factor(kmCluster$cluster)
+# 
+# tablaacp <- bind_cols(tablaacp, kmCut)
+# 
+# ggplot(tablaacp) +
+#   theme(panel.background = element_rect(fill = "#EDEDED"),
+#         panel.border = element_rect(color = "black", fill = NA),
+#         panel.grid = element_line(color = "#EDEDED"),
+#         axis.text = element_blank(),
+#         axis.ticks = element_blank()) +
+#   geom_vline(xintercept = t(acpFit$rotation[,1]) %*% scales) +
+#   geom_hline(yintercept = -t(acpFit$rotation[,2]) %*% scales) +
+#   geom_label(label = "EFECTO POSITIVO", y = -0.35, x = -2.15, fill = "#B9FF73") +
+#   geom_label(label = "EFECTO NEGATIVO", y = -0.606, x = -2.15, fill = "#FF7373") +
+#   geom_label(label = "EFECTO POSITIVO", y = 1.7, x = -0.35, fill = "#B9FF73") +
+#   geom_label(label = "EFECTO NEGATIVO", y = 1.7, x = -1.57, fill = "#FF7373") +
+#   geom_point(aes(x = PC1, y = PC2, color = kmCut), show.legend = F) +
 #   labs(color = "Grupo") +
-#   ggtitle("Separación por clusters", subtitle = "Cluster jerárquico con 2 grupos") +
-#   geom_text_repel(aes(x = -acpFit2.x...1., y = tabla...2., label = row.names(tabla2), color = hcCut), label.size = 0.5, max.overlaps = 30) +
+#   ggtitle("Agrupación de productos agroalimentarios en función del efecto del COVID-19", subtitle = "Clustering con 3 grupos") +
+#   geom_text_repel(aes(x = PC1, y = PC2, label = row.names(tablaacp), color = kmCut), size = 4, max.overlaps = 30, show.legend = F) +
 #   ylab("Índice Precio") +
-#   xlab("Índice Consumo")
+#   xlab("Índice Cantidad") +
+#   geom_label(label = "CANTIDAD", y = 1.7, x = -0.9463244) +
+#   geom_label(label = "PRECIO", y = -0.4784479, x = -2.15) +
+#   scale_color_manual(values = c("#727911", "#117279", "#DF4ADC"))
 
 #### 4.Comercio Exterior ####
 

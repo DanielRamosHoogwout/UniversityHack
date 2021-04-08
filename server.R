@@ -5,7 +5,8 @@ library(rgdal)
 library(plotly)
 library(tidyverse)
 library(forecast)
-
+library(Cairo)
+options(shiny.usecairo=T)
 
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {
