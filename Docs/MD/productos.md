@@ -1,3 +1,9 @@
+PROBLEMAS:
+-PARECE QUE ALGUNAS SERIES ESTÁN RETARDADAS, POR LO QUE PODRÍA SER QUE ALGUNOS INDICES NO REFLEJEN LA REALIDAD, YA QUE EN UN FUTURO LOS ÍNDICES PODRÍAN SER = 0. ESTO SE CORRIGE ESPERANDO MÁS PERIODOS Y CON NUEVOS DATOS POST-COVID
+- PROBLEMAS CON ARIMA, AL TENER POCOS DATOS ALGUNAS SERIES NO SON ESTACIONARIAS (?SE DICE ASI), POR LO QUE LA PREDICCIÓN ES MUY POBRE YA QUE ES LA MEDIA DE LA SERIE
+
+[FALTA ACABAR, SOBRA MUCHA COSA DE AQUI]
+
 En el gráfico dinámico de más arriba se puede observar la evolución de diferentes productos en función de una métrica determinada. Las diferentes métricas disponibles son el (1)
 el volumen de producto total, (2) el precio medio del producto, (3) el consumo per cápita, y (4) el gasto per cápita. Todas las métricas han sido estandarizadas.
 

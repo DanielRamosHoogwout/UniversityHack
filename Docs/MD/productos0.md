@@ -1,0 +1,5 @@
+Se han tenido en cuenta tres variables diferentes para estimar el efecto que ha tenido el COVID-19 sobre cada fruta o verdura: (1) el volumen de producto en el mercado, (2) el consumo del producto y (3) el precio del producto. Existe una fuerte relación entre el volumen de producto y su consumo, pero nos ha parecido interesante tener ambas en cuenta por si existe alguna asimetría entre la oferta y la demanda.
+
+Para cada combinación producto-variable se ha estimado un **índice** del efecto que ha tenido el COVID-19 sobre el producto en cuestión. Este índice se ha obtenido con la diferencia entre el valor desde el inicio del COVID-19 y una predicción del valor con los datos anteriores al COVID-19. Si los valores reales son superiores a los valores predichos, se puede decir que el COVID-19 ha tenido un efecto "positivo" sobre el valor de la variable, por lo que el índice es positivo. En caso contrario, el efecto es "negativo".
+
+En el siguiente gráfico se puede observar la evolución de los productos y su índice.

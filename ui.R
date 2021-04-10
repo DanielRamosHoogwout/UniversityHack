@@ -50,9 +50,13 @@ Body =  dashboardBody(
                 )
         ),
         tabItem(tabName = "productos", h1("Efecto del COVID-19 sobre productos agroalimentarios"),
+                fluidRow(box(width = 12, solidHeader = T,
+                             div(style = "text-align:justify",includeMarkdown("Docs/MD/productos0.md"))
+                )
+                ),
                 fluidRow(
                     box(width = 4,
-                        solidHeader = T, status = "primary",
+                        solidHeader = T,
                         selectInput("producto1", "Selecciona una producto:",
                                     choices = unique(data1$Producto)),
                         selectInput("variable1", "Selecciona una métrica:",
@@ -60,15 +64,21 @@ Body =  dashboardBody(
                         withSpinner(verbatimTextOutput("index"))
                        ),
                     box(width = 8,
+                        solidHeader = T,
                         withSpinner(plotOutput("prod1"))
                         )
 
                     ),
                 fluidRow(box(width = 12,
-                             solidHeader = T, status = "warning",
+                             solidHeader = T,
                              div(style = "text-align:justify",includeMarkdown("Docs/MD/productos.md"))
-                )
-                )#,
+                            )
+                        ),
+                fluidRow(
+                    box(width = 12, solidHeader = T, collapsible = T, collapsed=TRUE, title = "NOTAS TÉCNICAS",
+                        div(style = "text-align:justify",includeMarkdown("Docs/MD/notas-productos.md"))
+                    )
+                    )#,
         #         fluidRow(
         #             box(width = 8,
         #                 withSpinner(plotOutput("clus"))
@@ -108,6 +118,7 @@ Body =  dashboardBody(
 ))
 
 dashboardPage(
+    skin = "green",
     dashboardHeader(title = "Agro Análisis"),
     SideBar,
     Body
