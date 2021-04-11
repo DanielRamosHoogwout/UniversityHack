@@ -36,7 +36,7 @@ Body =  dashboardBody(
         # First tab content (dos cajas)
         tabItem(tabName = "data",
                 h2("DATOS"),
-                fluidRow(box(width = 12, solidHeader = TRUE,
+                fluidRow(box(width = 12, solidHeader = TRUE, status = "success",
                              div(style = "text-align:justify",includeMarkdown("Docs/MD/data.md"))
                 )
                 )
@@ -44,18 +44,18 @@ Body =  dashboardBody(
         # Second tab con texto
         tabItem(tabName = "intro",
                 h2("INTRODUCCIÓN"),
-                fluidRow(box(width = 12, solidHeader = TRUE,
+                fluidRow(box(width = 12, solidHeader = TRUE, status = "success",
                              div(style = "text-align:justify",includeMarkdown("Docs/MD/intro.md"))
                     )
                 )
         ),
         tabItem(tabName = "productos", h1("Efecto del COVID-19 sobre productos agroalimentarios"),
-                fluidRow(box(width = 12, solidHeader = T,
+                fluidRow(box(width = 12, solidHeader = T, status = "success",
                              div(style = "text-align:justify",includeMarkdown("Docs/MD/productos0.md"))
                 )
                 ),
                 fluidRow(
-                    box(width = 4,
+                    box(width = 4, status = "success",
                         solidHeader = T,
                         selectInput("producto1", "Selecciona una producto:",
                                     choices = unique(data1$Producto)),
@@ -70,7 +70,7 @@ Body =  dashboardBody(
 
                     ),
                 fluidRow(box(width = 12,
-                             solidHeader = T,
+                             solidHeader = T, status = "success",
                              div(style = "text-align:justify",includeMarkdown("Docs/MD/productos.md"))
                             )
                         ),
@@ -78,11 +78,11 @@ Body =  dashboardBody(
                              solidHeader = T,
                              div(tags$img(src = "Figure1.png", height = 470, width = 824.4), style="text-align: center;"))),
                 fluidRow(box(width = 12,
-                             solidHeader = T,
+                             solidHeader = T, status = "success",
                              div(style = "text-align:justify",includeMarkdown("Docs/MD/productos2.md"))
                             )
                         ),
-                fluidRow(box(width = 12, solidHeader = T, collapsible = T, collapsed=TRUE, title = "NOTAS TÉCNICAS",
+                fluidRow(box(width = 12, solidHeader = T, collapsible = T, collapsed=TRUE, title = "NOTAS TÉCNICAS", status = "success",
                         div(style = "text-align:justify",includeMarkdown("Docs/MD/notas-productos.md"))
                     )
                     )#,
@@ -94,13 +94,13 @@ Body =  dashboardBody(
         ),
         tabItem(tabName = "com_ex", h1("Comercio Exterior"),
                 fluidRow(
-                    box(width = 12, solidHeader = T, status = "warning", collapsible = T, 
+                    box(width = 12, solidHeader = T, status = "success", collapsible = T, 
                         div(style = "text-align:justify",includeMarkdown("Docs/MD/Com_Ex_1.md"))
                     )
                 ),
                 fluidRow(
                     box(width = 4,
-                        solidHeader = T, status = "primary",
+                        solidHeader = T, status = "success",
                         selectInput("pais", "Pais:", 
                                         choices = unique(data4$Pais)),
                             hr(),
@@ -112,14 +112,20 @@ Body =  dashboardBody(
                     )
                 ),
                 fluidRow(
-                    box(width = 12, solidHeader = T, status = "warning",
+                    box(width = 12, solidHeader = T, status = "success",
                         div(style = "text-align:justify",includeMarkdown("Docs/MD/Com_Ex_2.md"))
                         )
                 )
         ),
         tabItem(tabName = "tab_map", h1("Mapa CCAA"),
-                box(width = 8,
-                    withSpinner(plotlyOutput("map"))
+               
+                fluidRow(
+                    box(width = 8, solidHeader = T,
+                        withSpinner(plotlyOutput("map"))
+                    ),
+                    box(width = 4, solidHeader = T, status = "success",
+                        div(style = "text-align:justify",includeMarkdown("Docs/MD/Mapa.md"))
+                    )
                 )
         )
 ))
