@@ -1,34 +1,14 @@
-PROBLEMAS:
--PARECE QUE ALGUNAS SERIES ESTÁN RETARDADAS, POR LO QUE PODRÍA SER QUE ALGUNOS INDICES NO REFLEJEN LA REALIDAD, YA QUE EN UN FUTURO LOS ÍNDICES PODRÍAN SER = 0. ESTO SE CORRIGE ESPERANDO MÁS PERIODOS Y CON NUEVOS DATOS POST-COVID
-- PROBLEMAS CON ARIMA, AL TENER POCOS DATOS ALGUNAS SERIES NO SON ESTACIONARIAS (?SE DICE ASI), POR LO QUE LA PREDICCIÓN ES MUY POBRE YA QUE ES LA MEDIA DE LA SERIE
+Se puede ver como en la mayoría de los casos los efectos del COVID-19 son positivos. Intuitivamente, el índice es el área roja encerrada entre los valores reales y los predichos.
 
-[FALTA ACABAR, SOBRA MUCHA COSA DE AQUI]
+Hay que tener cuidado con las conclusiones debido a dos posibles problemas:
 
-En el gráfico dinámico de más arriba se puede observar la evolución de diferentes productos en función de una métrica determinada. Las diferentes métricas disponibles son el (1)
-el volumen de producto total, (2) el precio medio del producto, (3) el consumo per cápita, y (4) el gasto per cápita. Todas las métricas han sido estandarizadas.
+* Adelanto o atraso de la serie: El efecto del COVID-19 podría ser el de adelantar o atrasar los valores de la serie, por lo que se podría estar contabilizando un efecto negativo (positivo) cuando ha habido un atraso (adelanto) de la serie. Esto podría ocurrir si aun no contamos con todos los periodos en los que el COVID-19 ha tenido efecto, así que habría que actualizar la base de datos una vez dispongamos de ellos.
 
-Durante el periodo anterior al COVID-19, la variación de estas métricas parece normal. A partir de Marzo del 2020, con el comienzo de la pandemia en España, se observan dos series
-en el gráfico:
-* Serie roja: Evolución de la métrica durante el periodo de pandemia.
-* Serie discontinua: Predicción mediante un ARIMA (Modelo autorregresivo integrado de media móvil) utilizando los datos anteriores a la pandemia.
+* Preducción pobre: Los datos más antiguos usados para estimar la predicción son del 2018. Por lo tanto, al disponer tan solo de 2 años no siempre es posible detectar la estacionariedad de las series, en estos casos la mejor predicción posible es simplemente la media de la serie. Para arreglar este problema y obtener mejores predicciones, son necesarios datos más antiguos de las series temporales.
 
-Con el supuesto de que en los periodos anteriores a la pandemia, el mercado de frutas y hortalizas no ha sido afectado por ningún shock externo, y que el shock durante el periodo
-de pandemia ha sido debido al COVID-19, se ha estimado un índice del efecto del virus sobre los diferentes productos.
 
-Intuitivamente, este índice es el área encerrada entre la serie roja y la discontinua. Si la serie roja está por encima de la discontinua, se puede decir que el efecto del COVID-19
-ha sido el de aumentar la métrica en cuestión, por lo que el valor del índice es positivo. En el caso contrario, el índice es negativo. Los índices han sido creados para poderse
-comparar entre diferentes productos, incluso en el caso de que tengan una cantidad de datos post-pandemia diferentes.
+## Cluster
 
-Es necesario comentar que en algún caso la predicción del ARIMA no es muy buena debido a que no se detecta estacionalidad. Para corergir esto, son necesarios datos de las métricas
-anteriores a 2018.
+Una vez se tienen los índices de todos los productos con las diferentes métricas se puede realizar una clasificación en función de éstos. Primero se ha reducido la dimensión mediante un Análisis de Componentes Principales, con el que se ha obtenido un índice que representa el efecto en la cantidad de producto, y otro que representa el efecto en el precio.
 
-### Cluster
-
-Una vez se tienen los índices de todos los productos con las cuatro métricas, se puede realizar una clasificación en función de estos valores. Antes de hacer la agrupación, se ha
-reducido la dimensión de los cuatro índices de cada producto a únicamente dos dimensiones. Esto se ha hecho mediante un Análisis de Componentes Principales, con el que se ha
-obtenido un primer componente que relaciona los índices del volumen, el consumo per cápita y el gasto per cápita con la misma intensidad, y un segundo componente principal que solo
-recoge información del índice del precio medio. Al estar tan relacionados el volumen total, el consumo y el gasto, a este indicador se le puede considerar simplemente como el
-consumo general del producto.
-
-Ahora, con los índices del consumo general y del precio de cada producto, se ha realizado un cluster jerárquico y se han dividido los productos en dos grupos diferentes en función
-del efecto sufrido por el COVID-19. En el gráfico siguiente se pueden ver ambos grupos con sus respectivos índices.
+Después se han agrupado los productos en tres grupos diferentes en función del efecto que ha tenido el COVID-19.

@@ -74,8 +74,15 @@ Body =  dashboardBody(
                              div(style = "text-align:justify",includeMarkdown("Docs/MD/productos.md"))
                             )
                         ),
-                fluidRow(
-                    box(width = 12, solidHeader = T, collapsible = T, collapsed=TRUE, title = "NOTAS TÉCNICAS",
+                fluidRow(box(width = 12,
+                             solidHeader = T,
+                             div(tags$img(src = "Figure1.png", height = 470, width = 824.4), style="text-align: center;"))),
+                fluidRow(box(width = 12,
+                             solidHeader = T,
+                             div(style = "text-align:justify",includeMarkdown("Docs/MD/productos2.md"))
+                            )
+                        ),
+                fluidRow(box(width = 12, solidHeader = T, collapsible = T, collapsed=TRUE, title = "NOTAS TÉCNICAS",
                         div(style = "text-align:justify",includeMarkdown("Docs/MD/notas-productos.md"))
                     )
                     )#,
