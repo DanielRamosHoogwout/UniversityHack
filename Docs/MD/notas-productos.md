@@ -28,7 +28,7 @@ El primer componente del Análisis de Componentes Principales relaciona los índ
 
 ##### NOTA 5
 
-La agrupación de los productos se ha realizado con el algoritmo de K-Means Clustering. La elección de $K=3$ se ha obtenido con la regla del codo, queriendo minimizar la suma de los cuadrados dentro de cada grupo (Within-Cluster Sums of Squares / WCSS).
+La agrupación de los productos se ha realizado con el algoritmo de K-Means Clustering. La elección de K=3 se ha obtenido con la regla del codo, queriendo minimizar la suma de los cuadrados dentro de cada grupo (Within-Cluster Sums of Squares / WCSS).
 
 ##### NOTA 6
 
