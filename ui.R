@@ -33,7 +33,6 @@ SideBar = dashboardSidebar(
 ## Body content
 Body =  dashboardBody(
     tabItems(
-        # First tab content (dos cajas)
         tabItem(tabName = "data",
                 h2("DATOS"),
                 fluidRow(box(width = 12, solidHeader = TRUE, status = "success",
@@ -41,7 +40,6 @@ Body =  dashboardBody(
                 )
                 )
         ),
-        # Second tab con texto
         tabItem(tabName = "intro",
                 h2("INTRODUCCIÓN"),
                 fluidRow(box(width = 12, solidHeader = TRUE, status = "success",
@@ -90,12 +88,7 @@ Body =  dashboardBody(
                 fluidRow(box(width = 12, solidHeader = T, collapsible = T, collapsed=TRUE, title = "NOTAS TÉCNICAS", status = "success",
                         div(style = "text-align:justify",includeMarkdown("Docs/MD/notas-productos.md"))
                     )
-                    )#,
-        #         fluidRow(
-        #             box(width = 8,
-        #                 withSpinner(plotOutput("clus"))
-        #         )
-        # )
+                    )
         ),
         tabItem(tabName = "com_ex", h1("Comercio Exterior"),
                 fluidRow(
@@ -112,7 +105,7 @@ Body =  dashboardBody(
                             helpText("Selecciona un país")
                         ),
                     tabBox(title = "Total Anual", width = 8,
-                           tabPanel("Valor en €", withSpinner(plotOutput("comex_eur"))),
+                           tabPanel("Valor en €", withSpinner(plotOutput("comex_eur")), color = "green"),
                            tabPanel("Cantidad en 100kg",withSpinner(plotOutput("comex_kg")))
                     )
                 ),
