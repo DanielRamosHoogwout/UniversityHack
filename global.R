@@ -77,9 +77,9 @@ covindex <- function(prod = "CEBOLLAS", var = "Volumen" , plt = FALSE) {
 }
 
 ##################### CLUSTERING
-
-tabla <- matrix(nrow = 50, ncol = 3, dimnames = list(unique(data1.1$Producto), colnames(data1.1)[c(5, 10, 6)]))
-
+#
+#tabla <- matrix(nrow = 50, ncol = 3, dimnames = list(unique(data1.1$Producto), colnames(data1.1)[c(5, 10, 6)]))
+#
 # for(prods in unique(data1.1$Producto)) {
 #   for(inds in colnames(data1.1)[c(5, 10, 6)]) {
 #     tabla[prods, inds] <- covindex(prods, inds)$index
