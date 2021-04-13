@@ -175,7 +175,7 @@ for (i in seq(nrow(data4))){
 ### Comercio Exterior #####
 
 data4 %>% 
-  filter(!str_starts(Pais, "European")) %>%
+  filter(!str_starts(Pais, "Eu")) %>% #European Union - 27 countries
   mutate(Año = year(my(Inicio))) %>%
   group_by(Pais, Año, Accion, Unidad) %>% 
   summarise(total = sum(Valor)) -> pais_ano

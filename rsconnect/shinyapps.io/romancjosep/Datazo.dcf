@@ -1,0 +1,13 @@
+name: Datazo
+title: Datazo
+username:
+account: romancjosep
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3957602
+bundleId: 4467129
+url: https://romancjosep.shinyapps.io/Datazo/
+when: 1618341754.79454
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: Datazo.pptx

@@ -100,7 +100,7 @@ Body =  dashboardBody(
                     box(width = 4,
                         solidHeader = T, status = "success",
                         selectInput("pais", "Pais:", 
-                                        choices = unique(data4$Pais)),
+                                        choices = unique(pais_ano$Pais)),
                             hr(),
                             helpText("Selecciona un país")
                         ),
